@@ -1,49 +1,9 @@
 //Mohsen Ali
 //60305864
-const fs = require("fs/promises")
-const prompt = require("prompt-sync")()
 const business = require("./business")
+const prompt = require("prompt-sync")()
 
 
-async function readEmployeesData() {
-    let data= await fs.readFile("employees.json","utf8")
-    let employees = JSON.parse(data)
-
-    return employees
-    
-}
-
-async function readShiftsData() {
-    let data= await fs.readFile("shifts.json","utf8")
-    let shifts = JSON.parse(data)
-    
-    return shifts
-}
-
-async function readAssignmentsData() {
-    let data= await fs.readFile("assignments.json","utf8")
-    let assignments = JSON.parse(data)
-    
-    return assignments
-}
-
-
-async function writeEmployeesData(employeesList) {
-    await fs.writeFile("employees.json",JSON.stringify(employeesList),'utf-8');
-
-}
-
-
-async function writeShiftsData(shiftsList) {
-    await fs.writeFile("shifts.json",JSON.stringify(shiftsList),'utf-8');
-
-}
-
-
-async function writeAssignmentsData(assignmentsList) {
-    await fs.writeFile("assignments.json",JSON.stringify(assignmentsList),'utf-8');
-
-}
 
 /**
  * List all the registered employees(ID,Name,Phone).
@@ -52,15 +12,13 @@ async function writeAssignmentsData(assignmentsList) {
  * @returns {Array} returns a list of employees.
  */
 async function listEmployees() {
-    let data= await readEmployeesData()
-    //console.log("Employee ID".padEnd(12),"Name".padEnd(20),"Phone".padEnd(12))
-    // for (let d of data){
+    let data = await business.listEmployees()
+    console.log("Employee ID".padEnd(12),"Name".padEnd(20),"Phone".padEnd(12))
+     for (let d of data){
         
-    //    console.log("-----------".padEnd(12),"-------------------".padEnd(20),"---------".padEnd(12))
-    //    console.log(d.employeeId.padEnd(12),d.name.padEnd(20),d.phone.padEnd(12));
-    //}
-
-    return data
+        console.log("-----------".padEnd(12),"-------------------".padEnd(20),"---------".padEnd(12))
+        console.log(d.employeeId.padEnd(12),d.name.padEnd(20),d.phone.padEnd(12));
+    }
   
 }
 
@@ -74,20 +32,13 @@ async function listEmployees() {
  * 
  * @returns {void} Adds the new employee to the list.
  */
-async function addEmployee(employee) {
-    let data= await readEmployeesData()
-    //let lastEmployee = data[data.length - 1]
-    //let lastNumber = Number(lastEmployee.employeeId.substring(1))
-    //let newId = "E" + String(lastNumber + 1).padStart(3, "0")
-    //data.push({
-    //    employeeId: newId,
-    //    name: name,
-   //     phone: phone
-    //})
-    data.push(employee)
-    await writeEmployeesData(data)
-    //console.log("Employee added...")  
+async function addEmployee(name, phone) {
+
+    let message  = await business.addEmployee(name, phone)
+
+    console.log(message )
 }
+
 
 /**
  * Assign an employee to specific shift.
@@ -97,46 +48,13 @@ async function addEmployee(employee) {
  * 
  * @returns {void} employee will be assigned to shift.
  */
-async function assignShift(employeeID,shiftID) {
-    let employees = await readEmployeesData()
-    let shifts = await readShiftsData()
-    let assignments = await readAssignmentsData()
+async function assignShift(employeeID, shiftID) {
 
-    let employeeFound = false
-    for (let i = 0; i < employees.length; i++) {
-        if (employees[i].employeeId === employeeID) {
-            employeeFound = true
-        }
-    }
-    if (employeeFound === false) {
-        console.log("Employee does not exist")
-        return
-    }
+    let message = await business.assignShift(employeeID, shiftID)
 
-    let shiftFound = false
-    for (let i = 0; i < shifts.length; i++) {
-        if (shifts[i].shiftId === shiftID) {
-            shiftFound = true
-        }
-    }
-    if (shiftFound === false) {
-        console.log("Shift does not exist")
-        return
-    }
-
-    for (let i = 0; i < assignments.length; i++) {
-        if (assignments[i].employeeId === employeeID && assignments[i].shiftId === shiftID) {
-            console.log("Employee already assigned to shift")
-            return
-        }
-    }
-
-    assignments.push({ employeeId: employeeID, shiftId: shiftID })
-    await writeAssignmentsData(assignments)
-
-    console.log("Shift Recorded")
-    
+    console.log(message)
 }
+
 
 /**
  * display employee shift schedule timings.
@@ -145,27 +63,22 @@ async function assignShift(employeeID,shiftID) {
  * 
  * @returns {String} returns a shift schedule of the chosen employee.
  */
-async function viewEmployeeSchedule(employeeId) {
-    let shifts = await readShiftsData()
-    let assignments = await readAssignmentsData()
+async function viewEmployeeSchedule(employeeID) {
+
+    let schedule = await business.viewEmployeeSchedule(employeeID)
 
     console.log("date,startTime,endTime")
 
-    for (let i = 0; i < assignments.length; i++) {
-        if (assignments[i].employeeId === employeeId) {
-            let shiftId = assignments[i].shiftId
+    for (let i = 0; i < schedule.length; i++) {
 
-            for (let m = 0; m < shifts.length; m++) {
-                if (shifts[m].shiftId === shiftId) {
-                    console.log(shifts[m].date + "," + shifts[m].startTime + "," + shifts[m].endTime)
-                }
-
-            }
-
-
-        }
+        console.log(
+            schedule[i].date + "," +
+            schedule[i].startTime + "," +
+            schedule[i].endTime
+        )
     }
 }
+
  
 
 async function showMenu() {
