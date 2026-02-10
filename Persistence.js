@@ -48,16 +48,18 @@ async function writeAssignmentsData(assignmentsList) {
  * List all the registered employees(ID,Name,Phone).
  *
  * 
- * @returns {String} returns a list of employees.
+ * @returns {Array} returns a list of employees.
  */
 async function listEmployees() {
     let data= await readEmployeesData()
-    console.log("Employee ID".padEnd(12),"Name".padEnd(20),"Phone".padEnd(12))
-     for (let d of data){
+    //console.log("Employee ID".padEnd(12),"Name".padEnd(20),"Phone".padEnd(12))
+    // for (let d of data){
         
-        console.log("-----------".padEnd(12),"-------------------".padEnd(20),"---------".padEnd(12))
-        console.log(d.employeeId.padEnd(12),d.name.padEnd(20),d.phone.padEnd(12));
-    }
+    //    console.log("-----------".padEnd(12),"-------------------".padEnd(20),"---------".padEnd(12))
+    //    console.log(d.employeeId.padEnd(12),d.name.padEnd(20),d.phone.padEnd(12));
+    //}
+
+    return data
   
 }
 
