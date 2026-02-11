@@ -1,1 +1,9 @@
-[{"employeeId":"E001","shiftId":"S001"},{"employeeId":"E003","shiftId":"S004"},{"employeeId":"E003","shiftId":"S007"},{"employeeId":"E003","shiftId":"S008"},{"employeeId":"E007","shiftId":"S009"},{"employeeId":"E008","shiftId":"S010"}]
+[{"employeeId":"E001","shiftId":"S001"},
+{"employeeId":"E003","shiftId":"S004"},
+{"employeeId":"E003","shiftId":"S007"},
+{"employeeId":"E003","shiftId":"S008"},
+{"employeeId":"E007","shiftId":"S009"},
+{"employeeId":"E008","shiftId":"S010"},
+{"employeeId":"E007","shiftId":"S010"},
+{"employeeId":"E007","shiftId":"S006"},
+{"employeeId":"E007","shiftId":"S004"}]
