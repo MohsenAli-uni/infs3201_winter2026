@@ -71,11 +71,7 @@ async function viewEmployeeSchedule(employeeID) {
 
     for (let i = 0; i < schedule.length; i++) {
 
-        console.log(
-            schedule[i].date + "," +
-            schedule[i].startTime + "," +
-            schedule[i].endTime
-        )
+        console.log(schedule[i].date + "," + schedule[i].startTime + "," + schedule[i].endTime)
     }
 }
 
@@ -88,11 +84,11 @@ async function showMenu() {
         console.log("3. Assign employee to shift")
         console.log("4. View employee schedule")
         console.log("5.Exit")
-        let choice = Number(prompt("What is your Choice>"))
+        let choice = Number(prompt("What is your Choice >? "))
         if(choice == 1){
             await listEmployees()
         }
-        if(choice == 2){
+        else if(choice == 2){
             let name = prompt("Enter employee name: ")
             let phone = prompt("Enter phone number: ")
             await addEmployee(name,phone)
