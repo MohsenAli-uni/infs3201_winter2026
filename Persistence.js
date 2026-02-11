@@ -26,6 +26,15 @@ async function readAssignmentsData() {
 }
 
 
+async function readConfigData() {
+    let data = await fs.readFile("config.json","utf-8")
+    let config =JSON.parse(data)
+
+    return config
+    
+}
+
+
 async function writeEmployeesData(employeesList) {
     await fs.writeFile("employees.json",JSON.stringify(employeesList),'utf-8');
 
@@ -106,6 +115,6 @@ async function viewEmployeeSchedule(employeeId) {
 
 
 module.exports={readEmployeesData,readShiftsData,readAssignmentsData,writeEmployeesData,writeShiftsData,writeAssignmentsData
-    ,listEmployees,addEmployee,assignShift,viewEmployeeSchedule
+    ,listEmployees,addEmployee,assignShift,viewEmployeeSchedule,readConfigData
 }
 
