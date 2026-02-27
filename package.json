@@ -4,6 +4,7 @@
   "type": "commonjs",
   "main": "Assignment1.js",
   "dependencies": {
+    "mongodb": "^7.1.0",
     "prompt-sync": "^4.2.0"
   }
 }
