@@ -5,12 +5,7 @@ const prompt = require("prompt-sync")()
 
 
 
-/**
- * List all the registered employees(ID,Name,Phone).
- *
- * 
- * @returns {Array} returns a list of employees.
- */
+
 async function listEmployees() {
     let data = await business.listEmployees()
     console.log("Employee ID".padEnd(12),"Name".padEnd(20),"Phone".padEnd(12))
@@ -24,14 +19,7 @@ async function listEmployees() {
 
 
 
-/**
- * Add a unique new employee to the list of employees.
- *
- * @param {String} name Name of the new employee.
- * @param {String} phone phone number of the new employee.
- * 
- * @returns {void} Adds the new employee to the list.
- */
+
 async function addEmployee(name, phone) {
 
     let message  = await business.addEmployee(name, phone)
@@ -43,13 +31,7 @@ async function addEmployee(name, phone) {
 
 
 
-/**
- * display employee shift schedule timings.
- *
- * @param {String} employeeID employee ID.
- * 
- * @returns {String} returns a shift schedule of the chosen employee.
- */
+
 async function viewEmployeeSchedule(employeeID) {
 
     let schedule = await business.viewEmployeeSchedule(employeeID)

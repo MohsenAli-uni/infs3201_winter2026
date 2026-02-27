@@ -1,14 +1,26 @@
 const persistence = require("./persistence")
 
 
-
+/**
+ * List all the registered employees(ID,Name,Phone).
+ *
+ * 
+ * @returns {Array} returns a list of employees.
+ */
 async function listEmployees() {
   return await persistence.readEmployeesData()
 }
 
 
 
-
+/**
+ * Add a unique new employee to the list of employees.
+ *
+ * @param {String} name Name of the new employee.
+ * @param {String} phone phone number of the new employee.
+ * 
+ * @returns {void} Adds the new employee to the list.
+ */
 async function addEmployee(name, phone) {
 
   let data = await persistence.readEmployeesData()
@@ -31,9 +43,13 @@ async function addEmployee(name, phone) {
 }
 
 
-
-
-
+/**
+ * display employee shift schedule timings.
+ *
+ * @param {String} employeeID employee ID.
+ * 
+ * @returns {String} returns a shift schedule of the chosen employee.
+ */
 async function viewEmployeeSchedule(employeeId) {
     let shifts = await persistence.readShiftsData()
     let assignments = await persistence.readAssignmentsData()
