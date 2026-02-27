@@ -71,17 +71,6 @@ async function addEmployee(employee) {
 }
 
 
-async function assignShift(employeeID,shiftID) {
-    
-    let assignments = await readAssignmentsData()
-
-    assignments.push({ employeeId: employeeID, shiftId: shiftID })
-    await writeAssignmentsData(assignments)
-   
-}
-
-
-
 
 async function viewEmployeeSchedule(employeeId) {
     let shifts = await readShiftsData()
@@ -115,6 +104,6 @@ async function viewEmployeeSchedule(employeeId) {
 
 
 module.exports={readEmployeesData,readShiftsData,readAssignmentsData,writeEmployeesData,writeShiftsData,writeAssignmentsData
-    ,listEmployees,addEmployee,assignShift,viewEmployeeSchedule,readConfigData
+    ,listEmployees,addEmployee,viewEmployeeSchedule,readConfigData
 }
 
