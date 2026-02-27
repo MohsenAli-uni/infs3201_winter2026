@@ -40,20 +40,7 @@ async function addEmployee(name, phone) {
 }
 
 
-/**
- * Assign an employee to specific shift.
- *
- * @param {String} employeeID employee ID.
- * @param {String} shiftID shift ID.
- * 
- * @returns {void} employee will be assigned to shift.
- */
-async function assignShift(employeeID, shiftID) {
 
-    let message = await business.assignShift(employeeID, shiftID)
-
-    console.log(message)
-}
 
 
 /**
@@ -81,9 +68,8 @@ async function showMenu() {
     while(true){
         console.log("1. Show all employees")
         console.log("2. Add new employee")
-        console.log("3. Assign employee to shift")
-        console.log("4. View employee schedule")
-        console.log("5.Exit")
+        console.log("3. View employee schedule")
+        console.log("4.Exit")
         let choice = Number(prompt("What is your Choice >? "))
         if(choice == 1){
             await listEmployees()
@@ -95,14 +81,9 @@ async function showMenu() {
         }
         else if(choice == 3){
             let employeeID = prompt("Enter employee ID: ")
-            let shiftID = prompt("Enter shift ID: ")
-            await assignShift(employeeID,shiftID)
-        }
-        else if(choice == 4){
-            let employeeID = prompt("Enter employee ID: ")
             await viewEmployeeSchedule(employeeID)
         }
-        else if(choice == 5){
+        else if(choice == 4){
             break
         }
         else{
