@@ -1,3 +1,4 @@
+// connection ----------------------------------------------
 let express = require("express");
 const business = require("./business");
 let app = new express();
@@ -5,13 +6,13 @@ let app = new express();
 
 app.use(express.urlencoded({ extended: true }));
 
-// home page
+// home page ------------------------------------------------
 app.get("/", async (req, res) => {
   let employees = await business.listEmployees();
 
   let html = "<html><head><title>Employees</title>";
 
-  
+
   html += "<style>";
   html += "table{border-collapse:collapse;}";
   html += "th,td{padding:6px;}";   
@@ -34,7 +35,7 @@ app.get("/", async (req, res) => {
 });
 
 
-// add employee
+// add employee (GET)--------------------------------------------------
 app.get("/employee/add", (req, res) => {
 
   let html = "<html><body>";
@@ -54,7 +55,7 @@ app.get("/employee/add", (req, res) => {
 });
 
 
-// add employee
+// add employee (POST) -----------------------------------------------------------
 app.post("/employee/add", async (req, res) => {
 
   let name = (req.body.name || "").trim();
