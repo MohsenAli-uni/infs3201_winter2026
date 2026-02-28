@@ -151,7 +151,7 @@ app.get("/employee/:id", async (req, res) => {
 });
 
 
-// Edit page
+// Edit emploee page (GET) ----------------------------------------------------
 app.get("/employee/:id/edit", async (req, res) => {
 
   let id = req.params.id;
@@ -186,7 +186,7 @@ for (let i = 0; i < employees.length; i++) {
 });
 
 
-// Edit page
+// Edit employee page (POST) ---------------------------------------------------
 app.post("/employee/:id/edit", async (req, res) => {
 
   let id = req.params.id;
