@@ -32,7 +32,7 @@ app.get("/", async (req, res) => {
   html += "</style></head><body>";
 
 
-  html += "<h1>Employees</h1>";
+  html += "<h1>List of Employees</h1>";
   html += "<p><a href='/employee/add'>Add Employee</a></p>";
 
 
