@@ -15,6 +15,7 @@ async function getDb(){
     return dbInstance;
 }
 
+// Read and update functions -----------------------------------------------
 /**
  * Get all employees from database
  * @returns {Promise<Array>} list of employees
@@ -44,10 +45,8 @@ async function readAssignmentsData() {
 
 
 /**
- * Update employee name and phone by ID.
- * @param {String} employeeId
- * @param {String} name
- * @param {String} phone
+ * Replace all employees data
+ * @param {Array} data
  */
 async function updateEmployeesData(data) {
 
