@@ -52,8 +52,9 @@ async function listEmployees() {
 
 
 async function addEmployee(employee) {
-    const db = await getDb();
-    await db.collection("employees").insertOne(employee);     
+    let data= await readEmployeesData()
+    data.push(employee)
+    await updateEmployeesData(data)     
 }
 
 
