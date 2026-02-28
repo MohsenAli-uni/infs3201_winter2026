@@ -1,13 +1,18 @@
 // connection to mongoDb -------------------------------------------------
-const {MongoClient} = require("mongodb");
+const { setServers } = require('node:dns/promises');
+setServers(["1.1.1.1", "8.8.8.8"]);
+
+const { MongoClient } = require("mongodb");
 const uri =
-"mongodb+srv://60305864:55482521m@cluster0.lpd1p.mongodb.net/INFS3201?retryWrites=true&w=majority&appName=Cluster0";
+"mongodb+srv://60305864:55482521m@cluster0.bw3r7xd.mongodb.net/infs3201_winter2026?appName=Cluster0";
+
 const client = new MongoClient(uri);
 
 
 async function getDb(){
     await client.connect();
-    return client.db("infs3201_winter2026");
+    dbInstance = client.db("infs3201_winter2026");
+    return dbInstance;
 }
 
 /**
