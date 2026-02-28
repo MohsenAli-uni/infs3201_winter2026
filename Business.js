@@ -12,12 +12,7 @@ async function listEmployees() {
 }
 
 
-/**
- * Adds a new unique employee.
- * @param {String} name
- * @param {String} phone
- * @returns {Promise<void>}
- */
+
 /**
  * Adds a new unique employee to the list.
  * @param {String} name

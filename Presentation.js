@@ -154,7 +154,7 @@ app.get("/employee/:id", async (req, res) => {
     }
   }
 
-  let html = "<html><head><title>Employee Details</title>";
+  let html = "<html><head><title>Employee Details</title></head>";
   html += "<style>";
   html += ".morning{background-color:yellow;}";
   html += "td{padding:6px;}";

@@ -11,7 +11,7 @@ const client = new MongoClient(uri);
 
 async function getDb(){
     await client.connect();
-    dbInstance = client.db("infs3201_winter2026");
+    let dbInstance = client.db("infs3201_winter2026");
     return dbInstance;
 }
 
@@ -45,18 +45,37 @@ async function readAssignmentsData() {
 
 
 /**
- * Replace all employees data
- * @param {Array} data
+ * Synchronize employees collection with the provided list.
+ * Upserts each employee in the list (replaceOne + upsert)
+ * Deletes only employees that are not in the list anymore
+ *
+ * @param {Array} data Updated list of employees.
+ * @returns {Promise<void>}
  */
 async function updateEmployeesData(data) {
+  const db = await getDb();
+  const col = db.collection("employees");
 
-    const db = await getDb();
+  // Collect employeeIds from incoming data
+  const ids = [];
+  for (let i = 0; i < data.length; i++) {
+    ids.push(data[i].employeeId);
+  }
 
-    await db.collection("employees").deleteMany({});
 
-    if (data.length > 0) {
-        await db.collection("employees").insertMany(data);
-    }
+  await col.deleteMany({ employeeId: { $nin: ids } });
+
+  for (let i = 0; i < data.length; i++) {
+    const emp = data[i];
+
+    if (emp._id) delete emp._id;
+
+    await col.replaceOne(
+      { employeeId: emp.employeeId },
+      emp,
+      { upsert: true }
+    );
+  }
 }
 
 /**
