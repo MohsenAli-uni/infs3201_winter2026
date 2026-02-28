@@ -5,7 +5,7 @@ const persistence = require("./persistence")
  * List all the registered employees(ID,Name,Phone).
  *
  * 
- * @returns {Array} returns a list of employees.
+ * @returns {Promise<Array>} returns a list of employees.
  */
 async function listEmployees() {
   return await persistence.readEmployeesData()
@@ -35,9 +35,8 @@ async function addEmployee(name, phone) {
     
     data.push(employee)
 
-    await persistence.writeEmployeesData(data)
+    await persistence.updateEmployeesData(data)
 
-    return "Employee added..."
 }
 
 

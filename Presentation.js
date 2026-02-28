@@ -229,7 +229,7 @@ for (let i = 0; i < employees.length; i++) {
   let html = "<html><body>";
   html += "<h1>Edit Employee</h1>";
 
-  html += `<form method="POST" action='/employee/:id/edit'>`;
+  html += `<form method="POST" action='/employee/${id}/edit'>`;
   html += "<label for='name'>Name:</label>"
   html += `<input type='text' id='name' name="name" value="${employee.name}"><br><br>`;
   html += "<label for='phone'>Phone:</label>"

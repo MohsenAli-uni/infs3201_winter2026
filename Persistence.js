@@ -40,21 +40,24 @@ async function readAssignmentsData() {
 
 /**
  * Update employee name and phone by ID.
- * @param {Number} employeeId
+ * @param {String} employeeId
  * @param {String} name
  * @param {String} phone
  */
-async function updateEmployeesData(employeeId,name,phone) {
+async function updateEmployeesData(data) {
+
     const db = await getDb();
-    await db.collection("employees").updateOne(
-        { employeeId: employeeId },
-        { $set: { name: name, phone: phone } }
-    );
+
+    await db.collection("employees").deleteMany({});
+
+    if (data.length > 0) {
+        await db.collection("employees").insertMany(data);
+    }
 }
 
 /**
  * Update shift date, startTime, and endTime by ID.
- * @param {Number} shiftId
+ * @param {String} shiftId
  * @param {String} date
  * @param {String} startTime
  * @param {String} endTime
@@ -69,7 +72,7 @@ async function updateShiftsData(shiftId,date,startTime,endTime) {
 
 /**
  * Update assignment shiftId by employeeId.
- * @param {Number} shiftId
+ * @param {String} shiftId
  */
 async function updateAssignmentsData(employeeId,shiftId) {
     const db = await getDb();
@@ -112,7 +115,7 @@ async function addEmployee(employee) {
  * This function reads shifts and assignments data,
  * matches the employee with assigned shifts,
  * and builds a schedule containing date and time details.
- * @param {Number} employeeId - The ID of the employee.
+ * @param {String} employeeId - The ID of the employee.
  * @returns {Promise<Array>} Employee schedule containing shift details.
  */
 async function viewEmployeeSchedule(employeeId) {
@@ -150,7 +153,7 @@ async function viewEmployeeSchedule(employeeId) {
  * This function connects to the MongoDB database
  * and updates the employee document that matches
  * the given employeeId.
- * @param {Number} employeeId - The unique ID of the employee.
+ * @param {String} employeeId - The unique ID of the employee.
  * @param {String} name - The updated name of the employee.
  * @param {String} phone - The updated phone number.
  * @returns {Promise<void>} Resolves when update is completed.
