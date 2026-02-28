@@ -1,73 +1,59 @@
 //Mohsen Ali
 //60305864
-const fs = require("fs/promises")
+const {getDb} = require("./database");
 
 
 async function readEmployeesData() {
-    let data= await fs.readFile("employees.json","utf8")
-    let employees = JSON.parse(data)
-
-    return employees
-    
+    const db = await getDb();
+    return await db.collection("employees").find().toArray(); 
 }
 
 async function readShiftsData() {
-    let data= await fs.readFile("shifts.json","utf8")
-    let shifts = JSON.parse(data)
-    
-    return shifts
+    const db = await getDb();
+    return await db.collection("shifts").find().toArray();
 }
 
 async function readAssignmentsData() {
-    let data= await fs.readFile("assignments.json","utf8")
-    let assignments = JSON.parse(data)
-    
-    return assignments
+    const db = await getDb();
+    return await db.collection("assignments").find().toArray();
 }
 
 
-async function readConfigData() {
-    let data = await fs.readFile("config.json","utf-8")
-    let config =JSON.parse(data)
-
-    return config
-    
+async function updateEmployeesData(employeeId,name,phone) {
+    const db = await getDb();
+    await db.collection("employees").updateOne(
+        { employeeId: employeeId },
+        { $set: { name: name, phone: phone } }
+    );
 }
 
 
-async function writeEmployeesData(employeesList) {
-    await fs.writeFile("employees.json",JSON.stringify(employeesList),'utf-8');
-
+async function updateShiftsData(shiftId,date,startTime,endTime) {
+    const db = await getDb();
+    await db.collection("shifts").updateOne(
+        { shiftId: shiftId },
+        { $set: { date: date, startTime: startTime, endTime: endTime } }
+    );
 }
 
 
-async function writeShiftsData(shiftsList) {
-    await fs.writeFile("shifts.json",JSON.stringify(shiftsList),'utf-8');
-
-}
-
-
-async function writeAssignmentsData(assignmentsList) {
-    await fs.writeFile("assignments.json",JSON.stringify(assignmentsList),'utf-8');
-
+async function updateAssignmentsData(employeeId,shiftId) {
+    const db = await getDb();
+    await db.collection("assignments").updateOne(
+        { employeeId: employeeId },
+        { $set: { shiftId: shiftId } }
+    );
 }
 
 
 async function listEmployees() {
-    let data= await readEmployeesData()
-    
-    return data
-  
+    return await readEmployeesData()
 }
 
 
-
-
 async function addEmployee(employee) {
-    let data= await readEmployeesData()
-    data.push(employee)
-    await writeEmployeesData(data)
-      
+    const db = await getDb();
+    await db.collection("employees").insertOne(employee);     
 }
 
 
@@ -103,7 +89,8 @@ async function viewEmployeeSchedule(employeeId) {
  
 
 
-module.exports={readEmployeesData,readShiftsData,readAssignmentsData,writeEmployeesData,writeShiftsData,writeAssignmentsData
-    ,listEmployees,addEmployee,viewEmployeeSchedule,readConfigData
+module.exports={readEmployeesData,readShiftsData,readAssignmentsData,
+    updateEmployeesData,updateShiftsData,updateAssignmentsData
+    ,listEmployees,addEmployee,viewEmployeeSchedule
 }
 

@@ -37,7 +37,7 @@ async function addEmployee(name, phone) {
     
     data.push(employee)
 
-    await persistence.writeEmployeesData(data)
+    await persistence.updateEmployeesData(data)
 
     return "Employee added..."
 }
