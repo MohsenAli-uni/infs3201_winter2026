@@ -10,23 +10,40 @@ async function getDb(){
     return client.db("infs3201_winter2026");
 }
 
-// read and update functions ----------------------------------------------
+/**
+ * Get all employees from database
+ * @returns {Array} list of employees
+ */
 async function readEmployeesData() {
     const db = await getDb();
     return await db.collection("employees").find().toArray(); 
 }
 
+/**
+ * Get all shifts from database
+ * @returns {Array} list of shifts
+ */
 async function readShiftsData() {
     const db = await getDb();
     return await db.collection("shifts").find().toArray();
 }
 
+/**
+ * Get all assignments from database
+ * @returns {Array} list of assignments
+ */
 async function readAssignmentsData() {
     const db = await getDb();
     return await db.collection("assignments").find().toArray();
 }
 
 
+/**
+ * Update employee name and phone by ID.
+ * @param {Number} employeeId
+ * @param {String} name
+ * @param {String} phone
+ */
 async function updateEmployeesData(employeeId,name,phone) {
     const db = await getDb();
     await db.collection("employees").updateOne(
@@ -35,7 +52,13 @@ async function updateEmployeesData(employeeId,name,phone) {
     );
 }
 
-
+/**
+ * Update shift date, startTime, and endTime by ID.
+ * @param {Number} shiftId
+ * @param {String} date
+ * @param {String} startTime
+ * @param {String} endTime
+ */
 async function updateShiftsData(shiftId,date,startTime,endTime) {
     const db = await getDb();
     await db.collection("shifts").updateOne(
@@ -44,7 +67,10 @@ async function updateShiftsData(shiftId,date,startTime,endTime) {
     );
 }
 
-
+/**
+ * Update assignment shiftId by employeeId.
+ * @param {Number} shiftId
+ */
 async function updateAssignmentsData(employeeId,shiftId) {
     const db = await getDb();
     await db.collection("assignments").updateOne(
@@ -55,11 +81,25 @@ async function updateAssignmentsData(employeeId,shiftId) {
 
 
 // operational functions -----------------------------------------------------
+
+/**
+ * Retrieves and returns all employees.
+ * This function calls readEmployeesData()
+ * to fetch employee records from the database.
+ * @returns {Promise<Array>} List of employees.
+ */
 async function listEmployees() {
     return await readEmployeesData()
 }
 
-
+/**
+ * Adds a new employee to the employees list.
+ * This function retrieves the existing employees,
+ * adds the new employee object to the array,
+ * then updates the database.
+ * @param {Object} employee - The employee object to add.
+ * @returns {Promise<void>}
+ */
 async function addEmployee(employee) {
     let data= await readEmployeesData()
     data.push(employee)
@@ -67,7 +107,14 @@ async function addEmployee(employee) {
 }
 
 
-
+/**
+ * Retrieves the work schedule for a specific employee.
+ * This function reads shifts and assignments data,
+ * matches the employee with assigned shifts,
+ * and builds a schedule containing date and time details.
+ * @param {Number} employeeId - The ID of the employee.
+ * @returns {Promise<Array>} Employee schedule containing shift details.
+ */
 async function viewEmployeeSchedule(employeeId) {
     let shifts = await readShiftsData()
     let assignments = await readAssignmentsData()
@@ -97,6 +144,17 @@ async function viewEmployeeSchedule(employeeId) {
     return employeeSchedule
 }
 
+
+/**
+ * Updates an employee's name and phone number.
+ * This function connects to the MongoDB database
+ * and updates the employee document that matches
+ * the given employeeId.
+ * @param {Number} employeeId - The unique ID of the employee.
+ * @param {String} name - The updated name of the employee.
+ * @param {String} phone - The updated phone number.
+ * @returns {Promise<void>} Resolves when update is completed.
+ */
 async function updateEmployee(employeeId, name, phone) {
   const db = await getDb();
   await db.collection("employees").updateOne(
