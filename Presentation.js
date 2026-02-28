@@ -73,7 +73,7 @@ app.post("/employee/add", async (req, res) => {
 });
 
 
-// employee details
+// employee details (GET) ----------------------------------------------
 app.get("/employee/:id", async (req, res) => {
 
   let id = req.params.id;
@@ -93,7 +93,7 @@ app.get("/employee/:id", async (req, res) => {
 
   let shifts = await business.viewEmployeeSchedule(id);
 
-  // sort shifts (date + startTime)
+  // sort shifts (date + startTime) -------------------------------------
   for (let i = 0; i < shifts.length - 1; i++) {
     for (let j = 0; j < shifts.length - 1 - i; j++) {
 
