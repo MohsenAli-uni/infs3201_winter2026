@@ -1,7 +1,7 @@
 // connection to mongoDb -------------------------------------------------
 const {MongoClient} = require("mongodb");
 const uri =
-"mongodb+srv://60305864:55482521m@cluster0.lpd1p.mongodb.net/infs3201_winter2026?retryWrites=true&w=majority&appName=Cluster0";
+"mongodb+srv://60305864:55482521m@cluster0.lpd1p.mongodb.net/INFS3201?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 
 
@@ -12,7 +12,7 @@ async function getDb(){
 
 /**
  * Get all employees from database
- * @returns {Array} list of employees
+ * @returns {Promise<Array>} list of employees
  */
 async function readEmployeesData() {
     const db = await getDb();
@@ -21,7 +21,7 @@ async function readEmployeesData() {
 
 /**
  * Get all shifts from database
- * @returns {Array} list of shifts
+ * @returns {Promise<Array>} list of shifts
  */
 async function readShiftsData() {
     const db = await getDb();
@@ -30,7 +30,7 @@ async function readShiftsData() {
 
 /**
  * Get all assignments from database
- * @returns {Array} list of assignments
+ * @returns {Promise<Array>} list of assignments
  */
 async function readAssignmentsData() {
     const db = await getDb();
@@ -96,17 +96,13 @@ async function listEmployees() {
 }
 
 /**
- * Adds a new employee to the employees list.
- * This function retrieves the existing employees,
- * adds the new employee object to the array,
- * then updates the database.
- * @param {Object} employee - The employee object to add.
+ * Insert a new employee into the database.
+ * @param {Object} employee
  * @returns {Promise<void>}
  */
 async function addEmployee(employee) {
-    let data= await readEmployeesData()
-    data.push(employee)
-    await updateEmployeesData(data)     
+    const db = await getDb();
+    await db.collection("employees").insertOne(employee);
 }
 
 

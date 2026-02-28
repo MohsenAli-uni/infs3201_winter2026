@@ -12,31 +12,33 @@ async function listEmployees() {
 }
 
 
-
 /**
- * Adds a new unique employee to the list.
- * @param {String} name - Name of the new employee.
- * @param {String} phone - Phone number of the new employee.
- * @returns {Promise<void>} Resolves after employee is added.
+ * Adds a new unique employee.
+ * @param {String} name
+ * @param {String} phone
+ * @returns {Promise<void>}
  */
 async function addEmployee(name, phone) {
 
-  let data = await persistence.readEmployeesData()
+    let employees = await persistence.readEmployeesData();
 
-    let lastEmployee = data[data.length - 1]
-    let lastNumber = Number(lastEmployee.employeeId.substring(1))
-    let newId = "E" + String(lastNumber + 1).padStart(3, "0")
+    let newId;
 
-    let employee = {
+    if (employees.length === 0) {
+        newId = "E001";
+    } else {
+        let lastEmployee = employees[employees.length - 1];
+        let lastNumber = Number(lastEmployee.employeeId.substring(1));
+        newId = "E" + String(lastNumber + 1).padStart(3, "0");
+    }
+
+    let newEmployee = {
         employeeId: newId,
         name: name,
         phone: phone
-    }
-    
-    data.push(employee)
+    };
 
-    await persistence.updateEmployeesData(data)
-
+    await persistence.addEmployee(newEmployee);
 }
 
 
