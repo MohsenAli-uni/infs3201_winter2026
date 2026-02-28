@@ -1,3 +1,4 @@
+// connection to mongoDb -------------------------------------------------
 const {MongoClient} = require("mongodb");
 const uri =
 "mongodb+srv://60305864:55482521m@cluster0.lpd1p.mongodb.net/infs3201_winter2026?retryWrites=true&w=majority&appName=Cluster0";
@@ -9,7 +10,7 @@ async function getDb(){
     return client.db("infs3201_winter2026");
 }
 
-
+// read and update functions ----------------------------------------------
 async function readEmployeesData() {
     const db = await getDb();
     return await db.collection("employees").find().toArray(); 
@@ -53,6 +54,7 @@ async function updateAssignmentsData(employeeId,shiftId) {
 }
 
 
+// operational functions -----------------------------------------------------
 async function listEmployees() {
     return await readEmployeesData()
 }

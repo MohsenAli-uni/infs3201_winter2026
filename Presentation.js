@@ -10,14 +10,18 @@ app.get("/", async (req, res) => {
   let employees = await business.listEmployees();
 
   let html = "<html><head><title>Employees</title>";
+
+  
   html += "<style>";
   html += "table{border-collapse:collapse;}";
   html += "th,td{padding:6px;}";   
   html += ".morning{background-color:yellow;}";
   html += "</style></head><body>";
 
+
   html += "<h1>Employees</h1>";
   html += "<p><a href='/employee/add'>Add Employee</a></p>";
+
 
   html += "<ul>";
   for (let e of employees) {
