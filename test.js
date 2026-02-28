@@ -1,6 +1,9 @@
 
 //Mohsen Ali
 //60305864
+// IMPORTANT COMMENT >>>
+// this page purpose was just to test the presentation layer (web page user interface).
+// Because the mongoDb database refuse to work despite every attempt to resolve the problem without any progress.
 const fs = require("fs/promises")
 
 
