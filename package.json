@@ -4,6 +4,8 @@
   "type": "commonjs",
   "main": "Assignment1.js",
   "dependencies": {
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.6",
     "mongodb": "^7.1.0",
     "prompt-sync": "^4.2.0"
   }

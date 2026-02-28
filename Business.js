@@ -37,7 +37,7 @@ async function addEmployee(name, phone) {
     
     data.push(employee)
 
-    await persistence.updateEmployeesData(data)
+    await persistence.writeEmployeesData(data)
 
     return "Employee added..."
 }
@@ -75,5 +75,18 @@ async function viewEmployeeSchedule(employeeId) {
     return employeeSchedule
 }
 
+/**
+ * function for the update(edit) the employee information.
+ *
+ * @param {String} employeeID employee ID.
+ * @param {String} name employee name.
+ * @param {String} phone employee phone.
+ * 
+ * @returns {void} update by using updateOn in persistence layer.
+ */
+async function updateEmployee(employeeId, name, phone) {
+  await persistence.updateEmployee(employeeId, name, phone);
+}
 
-module.exports={listEmployees,addEmployee,viewEmployeeSchedule}
+
+module.exports = { listEmployees, addEmployee, viewEmployeeSchedule, updateEmployee };

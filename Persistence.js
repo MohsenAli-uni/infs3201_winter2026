@@ -1,6 +1,13 @@
-//Mohsen Ali
-//60305864
-const {getDb} = require("./database");
+const {MongoClient} = require("mongodb");
+const uri =
+"mongodb+srv://60305864:55482521m@cluster0.lpd1p.mongodb.net/infs3201_winter2026?retryWrites=true&w=majority&appName=Cluster0";
+const client = new MongoClient(uri);
+
+
+async function getDb(){
+    await client.connect();
+    return client.db("infs3201_winter2026");
+}
 
 
 async function readEmployeesData() {
@@ -87,11 +94,18 @@ async function viewEmployeeSchedule(employeeId) {
     } 
     return employeeSchedule
 }
+
+async function updateEmployee(employeeId, name, phone) {
+  const db = await getDb();
+  await db.collection("employees").updateOne(
+    { employeeId: employeeId },
+    { $set: { name: name, phone: phone } }
+  );
+}
  
 
 
 module.exports={readEmployeesData,readShiftsData,readAssignmentsData,
     updateEmployeesData,updateShiftsData,updateAssignmentsData
-    ,listEmployees,addEmployee,viewEmployeeSchedule
+    ,listEmployees,addEmployee,viewEmployeeSchedule,updateEmployee
 }
-
