@@ -7,6 +7,18 @@ let app = new express();
 app.use(express.urlencoded({ extended: true }));
 
 // home page ------------------------------------------------
+
+/**
+ * Home Page Route
+ * Handles HTTP GET request for the root URL (/).
+ * Retrieves employees data from the business layer
+ * and dynamically generates an HTML page displaying
+ * all employees.
+ * @route GET /
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void} Sends HTML response to client.
+ */
 app.get("/", async (req, res) => {
   let employees = await business.listEmployees();
 
@@ -36,6 +48,17 @@ app.get("/", async (req, res) => {
 
 
 // add employee (GET)--------------------------------------------------
+/**
+ * Add Employee Page Route
+ * Handles HTTP GET request for "/employee/add".
+ * Generates and displays an HTML form that allows
+ * users to enter employee name and phone number.
+ * The form submits data using POST method.
+ * @route GET /employee/add
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void} Sends HTML form page to client.
+ */
 app.get("/employee/add", (req, res) => {
 
   let html = "<html><body>";
@@ -56,6 +79,17 @@ app.get("/employee/add", (req, res) => {
 
 
 // add employee (POST) -----------------------------------------------------------
+/**
+ * Add Employee Submission Route
+ * Handles HTTP POST request for "/employee/add".
+ * Validates input data (name and phone format),
+ * adds the employee through the business layer,
+ * then redirects to the home page.
+ * @route POST /employee/add
+ * @param {Object} req - Express request object containing form data.
+ * @param {Object} res - Express response object.
+ * @returns {void} Redirects after successful insertion.
+ */
 app.post("/employee/add", async (req, res) => {
 
   let name = (req.body.name || "").trim();
@@ -74,6 +108,18 @@ app.post("/employee/add", async (req, res) => {
 
 
 // employee details (GET) ----------------------------------------------
+/**
+ * Employee Details Route
+ * Handles HTTP GET request for "/employee/:id".
+ * Retrieves employee information and assigned shifts,
+ * sorts shifts by date and start time,
+ * and dynamically generates an HTML page displaying
+ * employee details and schedule.
+ * @route GET /employee/:id
+ * @param {Object} req - Express request object containing employee ID.
+ * @param {Object} res - Express response object.
+ * @returns {void} Sends employee details page to client.
+ */
 app.get("/employee/:id", async (req, res) => {
 
   let id = req.params.id;
@@ -152,6 +198,17 @@ app.get("/employee/:id", async (req, res) => {
 
 
 // Edit emploee page (GET) ----------------------------------------------------
+/**
+ * Edit Employee Page Route
+ * Handles HTTP GET request for "/employee/:id/edit".
+ * Retrieves employee data using the provided ID
+ * and generates a pre-filled HTML form allowing
+ * the user to edit employee information.
+ * @route GET /employee/:id/edit
+ * @param {Object} req - Express request object containing employee ID.
+ * @param {Object} res - Express response object.
+ * @returns {void} Sends edit employee form page.
+ */
 app.get("/employee/:id/edit", async (req, res) => {
 
   let id = req.params.id;
@@ -187,6 +244,17 @@ for (let i = 0; i < employees.length; i++) {
 
 
 // Edit employee page (POST) ---------------------------------------------------
+/**
+ * Edit Employee Submission Route
+ * Handles HTTP POST request for "/employee/:id/edit".
+ * Validates updated employee data,
+ * updates employee information in the database,
+ * then redirects to the home page.
+ * @route POST /employee/:id/edit
+ * @param {Object} req - Express request object containing form data and employee ID.
+ * @param {Object} res - Express response object.
+ * @returns {void} Redirects after successful update.
+ */
 app.post("/employee/:id/edit", async (req, res) => {
 
   let id = req.params.id;
