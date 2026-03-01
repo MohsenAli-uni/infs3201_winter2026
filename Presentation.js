@@ -22,25 +22,25 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", async (req, res) => {
   let employees = await business.listEmployees();
 
-  let html = "<html><head><title>Employees</title>";
+  let html = "<html><head><title>Employees</title>"
 
 
   html += "<style>";
-  html += "table{border-collapse:collapse;}";
-  html += "th,td{padding:6px;}";   
-  html += ".morning{background-color:yellow;}";
-  html += "</style></head><body>";
+  html += "table{border-collapse:collapse;}"
+  html += "th,td{padding:6px;}"
+  html += ".morning{background-color:yellow;}"
+  html += "</style></head><body>"
 
 
-  html += "<h1>List of Employees</h1>";
+  html += "<h1>List of Employees</h1>"
 
-  html += "<ul>";
+  html += "<ul>"
   for (let e of employees) {
-    html += `<li><a href="/employee/${e.employeeId}">${e.name}</a></li>`;
+    html += `<li><a href="/employee/${e.employeeId}">${e.name}</a></li>`
   }
-  html += "</ul>";
+  html += "</ul>"
 
-  html += "</body></html>";
+  html += "</body></html>"
   res.send(html);
 });
 
@@ -165,18 +165,18 @@ for (let i = 0; i < employees.length; i++) {
   if (!employee)
     return res.send("<h1>Not found</h1>");
 
-  let html = "<html><body>";
-  html += "<h1>Edit Employee</h1>";
+  let html = "<html><body>"
+  html += "<h1>Edit Employee</h1>"
 
-  html += `<form method="POST" action='/employee/${id}/edit'>`;
+  html += `<form method="POST" action='/employee/${id}/edit'>`
   html += "<label for='name'>Name:</label>"
-  html += `<input type='text' id='name' name="name" value="${employee.name}"><br><br>`;
+  html += `<input type='text' id='name' name="name" value="${employee.name}"><br><br>`
   html += "<label for='phone'>Phone:</label>"
-  html += `<input type='text' id='phone' name="phone" value="${employee.phone}"><br><br>`;
-  html += "<input type='submit' value='Save'>";
-  html += "</form>";
+  html += `<input type='text' id='phone' name="phone" value="${employee.phone}"><br><br>`
+  html += "<input type='submit' value='Save'>"
+  html += "</form>"
 
-  html += "</body></html>";
+  html += "</body></html>"
 
   res.send(html);
 });
