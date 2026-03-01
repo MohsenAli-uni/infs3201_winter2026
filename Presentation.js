@@ -33,8 +33,6 @@ app.get("/", async (req, res) => {
 
 
   html += "<h1>List of Employees</h1>";
-  html += "<p><a href='/employee/add'>Add Employee</a></p>";
-
 
   html += "<ul>";
   for (let e of employees) {
@@ -46,65 +44,6 @@ app.get("/", async (req, res) => {
   res.send(html);
 });
 
-
-// add employee (GET)--------------------------------------------------
-/**
- * Add Employee Page Route
- * Handles HTTP GET request for "/employee/add".
- * Generates and displays an HTML form that allows
- * users to enter employee name and phone number.
- * The form submits data using POST method.
- * @route GET /employee/add
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends HTML form page to client.
- */
-app.get("/employee/add", (req, res) => {
-
-  let html = "<html><body>";
-  html += "<h1>Add Employee</h1>";
-
-  html += "<form method='POST' action='/employee/add'>";
-  html += "<label for='name'>Name:</label>";
-  html += "<input type='text' id='name' name='name'><br><br>";
-  html += "<label for='phone'>Phone:</label>";
-  html += "<input type='text' id='phone' name='phone'><br><br>";
-  html += "<input type='submit' value='Add'>";
-  html += "</form>";
-
-  html += "</body></html>";
-
-  res.send(html);
-});
-
-
-// add employee (POST) -----------------------------------------------------------
-/**
- * Add Employee Submission Route
- * Handles HTTP POST request for "/employee/add".
- * Validates input data (name and phone format),
- * adds the employee through the business layer,
- * then redirects to the home page.
- * @route POST /employee/add
- * @param {Object} req - Express request object containing form data.
- * @param {Object} res - Express response object.
- * @returns {void} Redirects after successful insertion.
- */
-app.post("/employee/add", async (req, res) => {
-
-  let name = (req.body.name || "").trim();
-  let phone = (req.body.phone || "").trim();
-
-  if (name.length === 0)
-    return res.send("<h1>Name required</h1>");
-
-  if (!/^\d{4}-\d{4}$/.test(phone))
-    return res.send("<h1>Phone format should be 0000-0000</h1>");
-
-  await business.addEmployee(name, phone);
-
-  res.redirect("/");
-});
 
 
 // employee details (GET) ----------------------------------------------
@@ -154,20 +93,20 @@ app.get("/employee/:id", async (req, res) => {
     }
   }
 
-  let html = "<html><head><title>Employee Details</title></head>";
-  html += "<style>";
-  html += ".morning{background-color:yellow;}";
-  html += "td{padding:6px;}";
-  html += "</style></head><body>";
+  let html = "<html><head><title>Employee Details</title></head>"
+  html += "<style>"
+  html += ".morning{background-color:yellow;}"
+  html += "td{padding:6px;}"
+  html += "</style></head><body>"
 
   html += "<h1>Employee Details</h1>";
-  html += `<p><b>ID:</b> ${employee.employeeId}</p>`;
-  html += `<p><b>Name:</b> ${employee.name}</p>`;
-  html += `<p><b>Phone:</b> ${employee.phone}</p>`;
+  html += `<p><b>ID:</b> ${employee.employeeId}</p>`
+  html += `<p><b>Name:</b> ${employee.name}</p>`
+  html += `<p><b>Phone:</b> ${employee.phone}</p>`
 
-  html += `<p><a href="/employee/${id}/edit">Edit</a></p>`;
+  html += `<p><a href="/employee/${id}/edit">Edit Details</a></p>`
 
-  html += "<h2>Shifts</h2>";
+  html += "<h2>Shifts</h2>"
 
  
   html += "<table>";
