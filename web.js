@@ -25,7 +25,7 @@ app.get("/", async (req, res) => {
   let html = "<html><head><title>Employees</title>"
 
 
-  html += "<style>";
+  html += "<style>"
   html += "table{border-collapse:collapse;}"
   html += "th,td{padding:6px;}"
   html += ".morning{background-color:yellow;}"
@@ -109,12 +109,12 @@ app.get("/employee/:id", async (req, res) => {
   html += "<h2>Shifts</h2>"
 
  
-  html += "<table>";
-  html += "<tr>";
-  html += "<td><b>Date</b></td>";
-  html += "<td><b>Start Time</b></td>";
-  html += "<td><b>End Time</b></td>";
-  html += "</tr>";
+  html += "<table>"
+  html += "<tr>"
+  html += "<td><b>Date</b></td>"
+  html += "<td><b>Start Time</b></td>"
+  html += "<td><b>End Time</b></td>"
+  html += "</tr>"
 
   for (let s of shifts) {
     let cls = "";
@@ -122,15 +122,15 @@ app.get("/employee/:id", async (req, res) => {
       cls = "morning";
     } 
 
-    html += "<tr>";
-    html += `<td>${s.date}</td>`;
-    html += `<td class="${cls}">${s.startTime}</td>`;
-    html += `<td>${s.endTime}</td>`;
-    html += "</tr>";
+    html += "<tr>"
+    html += `<td>${s.date}</td>`
+    html += `<td class="${cls}">${s.startTime}</td>`
+    html += `<td>${s.endTime}</td>`
+    html += "</tr>"
   }
 
-  html += "</table>";
-  html += "</body></html>";
+  html += "</table>"
+  html += "</body></html>"
 
   res.send(html);
 });
