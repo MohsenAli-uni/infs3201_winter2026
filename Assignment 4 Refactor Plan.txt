@@ -1,0 +1,33 @@
+Assignment 4 Refactor Plan
+
+1. Collections changes
+- employees: remove employeeId and use mongodb _id
+- shifts: remove shiftId and add an employees array containing employee objectids
+- assignments: will be removed
+- users: new collection for login
+- security log: new collection for request logging
+- sessions: needed for sessions 
+
+2. Persistence changes
+- Any function that searches by employeeId must be changed to search by _id
+- Any function that searches by shiftId must be changed to search by _id
+- Any function that reads assignments must be removed or changed
+- Schedule lookup must no longer use the assignments collection
+
+3. Business changes
+- Employee scheduling logic must now check the employees array inside each shift
+- Employee creation should no longer depend on custom employeeId values
+- Shift assignment logic must push employee objectids into shifts.employees
+
+4. Effect of embedded arrays on updates
+- Adding an employee to a shift now means updating the shift document
+- Removing an employee from a shift means removing that objectids from the employees array
+- This reduces the need for a separate assignments collection
+
+5. Risks
+- Existing code may still depend on employeeId and shiftId
+- Route parameters will arrive as strings and must be converted to objectids
+- Invalid objectids values may cause errors
+- Migration order is important
+- A backup should be made before running the transformation script
+
