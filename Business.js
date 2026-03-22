@@ -1,10 +1,11 @@
+
 const persistence = require("./persistence")
+
+
 
 
 /**
  * List all the registered employees(ID,Name,Phone).
- *
- * 
  * @returns {Promise<Array>} returns a list of employees.
  */
 async function listEmployees() {
@@ -20,26 +21,8 @@ async function listEmployees() {
  * @returns {Promise<void>}
  */
 async function addEmployee(name, phone) {
-
-    let data = await persistence.readEmployeesData();
-
-    let newId = "E001";
-
-    if (data.length > 0) {
-        let lastEmployee = data[data.length - 1];
-        let lastNumber = Number(lastEmployee.employeeId.substring(1));
-        newId = "E" + String(lastNumber + 1).padStart(3, "0");
-    }
-
-    let employee = {
-        employeeId: newId,
-        name: name,
-        phone: phone
-    };
-
-    data.push(employee);
-
-    await persistence.updateEmployeesData(data);
+    let employee = {name:name,phone:phone};
+    await persistence.addEmployee(employee);
 }
 
 
@@ -52,28 +35,7 @@ async function addEmployee(name, phone) {
  * @returns {Promise<Array>} List of employee shifts.
  */
 async function viewEmployeeSchedule(employeeId) {
-    let shifts = await persistence.readShiftsData()
-    let assignments = await persistence.readAssignmentsData()
-    
-    let employeeSchedule  = []
-
-    for (let i = 0; i < assignments.length; i++) {
-        if (assignments[i].employeeId === employeeId) {
-            let shiftId = assignments[i].shiftId
-
-            for (let m = 0; m < shifts.length; m++) {
-                if (shifts[m].shiftId === shiftId) {
-
-                    employeeSchedule.push({
-                        date: shifts[m].date,
-                        startTime: shifts[m].startTime,
-                        endTime: shifts[m].endTime
-                    })
-                }
-            }
-        }
-    }
-    return employeeSchedule
+    return await persistence.viewEmployeeSchedule(employeeId);
 }
 
 /**

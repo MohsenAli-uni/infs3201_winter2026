@@ -1,4 +1,4 @@
-// connection to mongoDb -------------------------------------------------
+// connection to mongoDb ------------------------------------------------------------------------------
 
 
 const { setServers } = require('node:dns/promises');
@@ -13,7 +13,7 @@ async function getDb(){
     return client.db("infs3201_winter2026");
 }
 
-// Read and update functions -----------------------------------------------
+// Read and update functions --------------------------------------------------------------------------
 
 
 /**
