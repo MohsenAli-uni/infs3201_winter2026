@@ -1,12 +1,11 @@
-// connection ----------------------------------------------
+// connection ---------------------------------------------------------------------------------
+
 let express = require("express");
 const business = require("./business");
 let app = new express();
-
-
 app.use(express.urlencoded({ extended: true }));
 
-// home page ------------------------------------------------
+// home page ----------------------------------------------------------------------------------
 
 /**
  * Home Page Route
@@ -30,17 +29,16 @@ app.get("/", async (req, res) => {
   html += "th,td{padding:6px;}"
   html += ".morning{background-color:yellow;}"
   html += "</style></head><body>"
-
-
   html += "<h1>List of Employees</h1>"
-
   html += "<ul>"
+
+
   for (let e of employees) {
-    html += `<li><a href="/employee/${e.employeeId}">${e.name}</a></li>`
+    html += `<li><a href="/employee/${String(e._id)}">${e.name}</a></li>`
   }
   html += "</ul>"
-
   html += "</body></html>"
+
   res.send(html);
 });
 
@@ -60,14 +58,13 @@ app.get("/", async (req, res) => {
  * @returns {void} Sends employee details page to client.
  */
 app.get("/employee/:id", async (req, res) => {
-
   let id = req.params.id;
 
   let employees = await business.listEmployees();
   let employee = null;
 
   for (let e of employees) {
-    if (e.employeeId === id) {
+    if (String(e._id) === String(id)) {
       employee = e;
       break;
     }
@@ -100,7 +97,7 @@ app.get("/employee/:id", async (req, res) => {
   html += "</style></head><body>"
 
   html += "<h1>Employee Details</h1>";
-  html += `<p><b>ID:</b> ${employee.employeeId}</p>`
+  html += `<p><b>ID:</b> ${employee._id}</p>`
   html += `<p><b>Name:</b> ${employee.name}</p>`
   html += `<p><b>Phone:</b> ${employee.phone}</p>`
 
@@ -156,7 +153,7 @@ app.get("/employee/:id/edit", async (req, res) => {
   let employee = null;
 
 for (let i = 0; i < employees.length; i++) {
-    if (employees[i].employeeId === id) {
+    if (String(employees[i]._id) === String(id)) {
         employee = employees[i];
         break;
     }
@@ -168,7 +165,7 @@ for (let i = 0; i < employees.length; i++) {
   let html = "<html><body>"
   html += "<h1>Edit Employee</h1>"
 
-  html += `<form method="POST" action='/employee/${id}/edit'>`
+  html += `<form method="POST" action='/employee/${String(employee._id)}/edit'>`
   html += "<label for='name'>Name:</label>"
   html += `<input type='text' id='name' name="name" value="${employee.name}"><br><br>`
   html += "<label for='phone'>Phone:</label>"
@@ -197,7 +194,6 @@ for (let i = 0; i < employees.length; i++) {
 app.post("/employee/:id/edit", async (req, res) => {
 
   let id = req.params.id;
-
   let name = (req.body.name || "").trim();
   let phone = (req.body.phone || "").trim();
 

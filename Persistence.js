@@ -4,7 +4,8 @@
 const { setServers } = require('node:dns/promises');
 setServers(["1.1.1.1", "8.8.8.8"]);
 
-const { MongoClient } = require("mongodb");
+const mongodb = require("mongodb");
+const { MongoClient } = mongodb;
 const url ="mongodb+srv://60305864:55482521m@cluster0.bw3r7xd.mongodb.net/infs3201_winter2026?appName=Cluster0";
 const client = new MongoClient(url);
 
@@ -77,13 +78,15 @@ async function viewEmployeeSchedule(employeeId) {
     let shifts = await db.collection("shifts").find().toArray();
     
     let employeeSchedule = [];
+
+    
     for (let i = 0; i < shifts.length; i++) {
 
         let found = false;
 
         if (shifts[i].employees) {
-            for (let m = 0; m < shifts.employees.length; m++) {
-                if (String(shifts[m].employees[j]) === String(employeeObjectId)) {
+            for (let m = 0; m < shifts[i].employees.length; m++) {
+                if (String(shifts[i].employees[m]) === String(employeeObjectId)) {
                     found = true;
                     break;
                 }
