@@ -1,0 +1,28 @@
+<h1>Employee Details</h1>
+
+
+<p><b>Name:</b> {{employee.name}}</p>
+<p><b>Phone:</b> {{employee.phone}}</p>
+
+<p>
+  <a href="/employee/{{employee._id}}/edit">Edit Details</a>
+</p>
+
+<h2>Shifts</h2>
+
+<table>
+  <tr>
+    <td><b>Date</b></td>
+    <td><b>Start Time</b></td>
+    <td><b>End Time</b></td>
+  </tr>
+
+  {{#each shifts}}
+    <tr>
+      <td>{{this.date}}</td>
+      <td class="{{this.cls}}">{{this.startTime}}</td>
+      <td>{{this.endTime}}</td>
+    </tr>
+  {{/each}}
+</table>
+

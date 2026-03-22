@@ -1,9 +1,15 @@
 // connection ---------------------------------------------------------------------------------
 
 let express = require("express");
+const { engine } = require("express-handlebars");
 const business = require("./business");
 let app = new express();
 app.use(express.urlencoded({ extended: true }));
+
+app.engine("handlebars", engine({ layoutsDir: "./templates/layouts"}));
+
+app.set("view engine", "handlebars");
+app.set("views", "./templates");
 
 // home page ----------------------------------------------------------------------------------
 
@@ -21,25 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", async (req, res) => {
   let employees = await business.listEmployees();
 
-  let html = "<html><head><title>Employees</title>"
-
-
-  html += "<style>"
-  html += "table{border-collapse:collapse;}"
-  html += "th,td{padding:6px;}"
-  html += ".morning{background-color:yellow;}"
-  html += "</style></head><body>"
-  html += "<h1>List of Employees</h1>"
-  html += "<ul>"
-
-
-  for (let e of employees) {
-    html += `<li><a href="/employee/${String(e._id)}">${e.name}</a></li>`
-  }
-  html += "</ul>"
-  html += "</body></html>"
-
-  res.send(html);
+  res.render("home", {title:"Employees",employees});
 });
 
 
@@ -71,7 +59,7 @@ app.get("/employee/:id", async (req, res) => {
   }
 
   if (!employee)
-    return res.send("<h1>Employee not found</h1>");
+    return res.render("notFound", {title: "Not Found",message: "Employee not found"});
 
   let shifts = await business.viewEmployeeSchedule(id);
 
@@ -90,46 +78,15 @@ app.get("/employee/:id", async (req, res) => {
     }
   }
 
-  let html = "<html><head><title>Employee Details</title></head>"
-  html += "<style>"
-  html += ".morning{background-color:yellow;}"
-  html += "td{padding:6px;}"
-  html += "</style></head><body>"
-
-  html += "<h1>Employee Details</h1>";
-  html += `<p><b>ID:</b> ${employee._id}</p>`
-  html += `<p><b>Name:</b> ${employee.name}</p>`
-  html += `<p><b>Phone:</b> ${employee.phone}</p>`
-
-  html += `<p><a href="/employee/${id}/edit">Edit Details</a></p>`
-
-  html += "<h2>Shifts</h2>"
-
- 
-  html += "<table>"
-  html += "<tr>"
-  html += "<td><b>Date</b></td>"
-  html += "<td><b>Start Time</b></td>"
-  html += "<td><b>End Time</b></td>"
-  html += "</tr>"
-
   for (let s of shifts) {
     let cls = "";
     if (s.startTime < "12:00"){
       cls = "morning";
     } 
-
-    html += "<tr>"
-    html += `<td>${s.date}</td>`
-    html += `<td class="${cls}">${s.startTime}</td>`
-    html += `<td>${s.endTime}</td>`
-    html += "</tr>"
+    s.cls = cls;
   }
 
-  html += "</table>"
-  html += "</body></html>"
-
-  res.send(html);
+  res.render("employeeDetails", {title: "Employee Details",employee,shifts});
 });
 
 
@@ -160,22 +117,9 @@ for (let i = 0; i < employees.length; i++) {
 }
 
   if (!employee)
-    return res.send("<h1>Not found</h1>");
+    return res.render("notFound", {title: "Not Found",message: "Employee not found"});
 
-  let html = "<html><body>"
-  html += "<h1>Edit Employee</h1>"
-
-  html += `<form method="POST" action='/employee/${String(employee._id)}/edit'>`
-  html += "<label for='name'>Name:</label>"
-  html += `<input type='text' id='name' name="name" value="${employee.name}"><br><br>`
-  html += "<label for='phone'>Phone:</label>"
-  html += `<input type='text' id='phone' name="phone" value="${employee.phone}"><br><br>`
-  html += "<input type='submit' value='Save'>"
-  html += "</form>"
-
-  html += "</body></html>"
-
-  res.send(html);
+  res.render("editEmployee", {title: "Edit Employee",employee});
 });
 
 
@@ -198,14 +142,14 @@ app.post("/employee/:id/edit", async (req, res) => {
   let phone = (req.body.phone || "").trim();
 
   if (name.length === 0)
-    return res.send("Invalid name");
+    return res.render("notFound", {title: "Invalid Input", message: "Invalid name"});
 
   if (!/^\d{4}-\d{4}$/.test(phone))
-    return res.send("Invalid phone");
+    return res.render("notFound", {title: "Invalid Input", message: "Invalid name"});
 
   await business.updateEmployee(id, name, phone);
 
-  res.redirect("/");
+  res.redirect(`/employee/${id}`);
 });
 
 app.listen(8000, () =>

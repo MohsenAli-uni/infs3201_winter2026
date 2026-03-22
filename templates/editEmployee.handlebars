@@ -1,0 +1,14 @@
+<h1>Edit Employee</h1>
+
+<form method="POST" action="/employee/{{employee._id}}/edit">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" value="{{employee.name}}">
+  <br><br>
+
+  <label for="phone">Phone:</label>
+  <input type="text" id="phone" name="phone" value="{{employee.phone}}">
+  <br><br>
+
+  <input type="submit" value="Save">
+</form>
+
