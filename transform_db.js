@@ -42,7 +42,7 @@ async function embedEmployeesInShifts() {
         // Step 3: if employee exists
         if (employee) {
 
-            // Step 4: push employee._id into shift.employees
+            // Step 4: push employee._id into shift.employees 
             await db.collection("shifts").updateOne(
                 { shiftId: assignment.shiftId },
                 { $push: { employees: employee._id } }
@@ -87,4 +87,3 @@ async function dropAssignmentsCollection() {
 }
 
 
-dropAssignmentsCollection()
