@@ -116,9 +116,20 @@ async function viewEmployeeSchedule(employeeId) {
  */
 async function updateEmployee(employeeId, name, phone, photo) {
   const db = await getDb();
+
+  let updatedFields = {
+        name: name,
+        phone: phone
+    };
+
+    if (photo && photo.trim() !== "") {
+        updatedFields.photo = photo;
+    }
+
+
   await db.collection("employees").updateOne(
     { _id: new mongodb.ObjectId(employeeId) },
-    { $set: { name: name, phone: phone, photo: photo } }
+    { $set:updatedFields }
   );
 }
  

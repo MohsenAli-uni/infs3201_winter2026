@@ -270,6 +270,7 @@ app.post("/employee/:id/edit", async (req, res) => {
   let id = req.params.id;
   let name = (req.body.name || "").trim();
   let phone = (req.body.phone || "").trim();
+  let photo = (req.body.photo || "").trim();
 
   if (name.length === 0)
     return res.render("notFound", {title: "Invalid Input", message: "Invalid name"});
@@ -277,7 +278,7 @@ app.post("/employee/:id/edit", async (req, res) => {
   if (!/^\d{4}-\d{4}$/.test(phone))
     return res.render("notFound", {title: "Invalid Input", message: "Invalid name"});
 
-  await business.updateEmployee(id, name, phone);
+  await business.updateEmployee(id, name, phone,photo);
 
   res.redirect(`/employee/${id}`);
 });

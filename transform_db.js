@@ -98,3 +98,14 @@ async function addPhotoFieldToEmployees() {
     console.log("Photo field added to all employees.");
 }
 
+async function createSessionTTLIndex() {
+    const db = await getDb();
+
+    await db.collection("sessions").createIndex(
+        { expiresAt: 1 },
+        { expireAfterSeconds: 0 }
+    );
+
+    console.log("TTL index created on sessions.expiresAt");
+}
+
