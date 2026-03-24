@@ -1,15 +1,146 @@
-// connection ---------------------------------------------------------------------------------
+// Connection and Setup -----------------------------------------------------------------------------------------------
 
-let express = require("express");
-const { engine } = require("express-handlebars");
 const business = require("./business");
-let app = new express();
-app.use(express.urlencoded({ extended: true }));
+const express = require("express");
+const app = new express();
+const { engine } = require("express-handlebars");
+const crypto = require("crypto");
+const cookieParser = require("cookie-parser");
+
 
 app.engine("handlebars", engine({ layoutsDir: "./templates/layouts"}));
-
+app.use(express.static("photos"));
 app.set("view engine", "handlebars");
 app.set("views", "./templates");
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+
+// login and session functions ------------------------------------------------------------------------------------------
+
+/**
+ * Checks if the user has a valid session from cookies.
+ * If yes, keeps them logged in and refreshes the session.
+ * Also logs every request.
+ * @param {import("express").Request} req - Express request object
+ * @param {import("express").Response} res - Express response object
+ * @param {import("express").NextFunction} next - Express next middleware function
+ * @returns {Promise<void>}
+ */
+app.use(async (req, res, next) => {
+  let username = null;
+  let sessionId = req.cookies.sessionId;
+
+  if (sessionId) {
+    let session = await business.validateSession(sessionId);
+
+    if (session) {
+      req.username = session.username;
+      username = session.username;
+
+      res.cookie("sessionId", sessionId, {
+        httpOnly: true,
+        maxAge: 5 * 60 * 1000
+      });
+    } else {
+      res.clearCookie("sessionId");
+    }
+  }
+  await business.logAccess(username, req.originalUrl, req.method);
+  next();
+});
+
+
+/**
+ * Shows the login page.
+ * Displays a message if one is provided.
+ * 
+ * @param {import("express").Request} req - Express request object
+ * @param {import("express").Response} res - Express response object
+ * @returns {void}
+ */
+app.get("/login", (req, res) => {
+  let message = req.query.message || "";
+  res.render("login", { title: "Login", message: message });
+});
+
+
+/**
+ * Handles login.
+ * Validates input, checks user, and creates a session if successful.
+ * 
+ * @param {import("express").Request} req - Express request object
+ * @param {import("express").Response} res - Express response object
+ * @returns {Promise<void>}
+ */
+app.post("/login", async (req, res) => {
+  let username = (req.body.username || "").trim();
+  let password = (req.body.password || "").trim();
+
+  if (!username || !password) {
+        return res.render("login", {
+            title: "Login",
+            message: "Please login first"
+        });
+    }
+
+  let session = await business.verifyLogin(username, password);
+
+  if (!session) {
+    return res.redirect("/login?message=Invalid username or password");
+  }
+
+  res.cookie("sessionId", session.sessionId, {
+    httpOnly: true,
+    maxAge: 5 * 60 * 1000
+  });
+
+  res.redirect("/");
+});
+
+
+
+/**
+ * Handles login.
+ * Validates input, checks user, and creates a session if successful.
+ * 
+ * @param {import("express").Request} req - Express request object
+ * @param {import("express").Response} res - Express response object
+ * @returns {Promise<void>}
+ */
+app.get("/logout", async (req, res) => {
+  let sessionId = req.cookies.sessionId;
+
+  if (sessionId) {
+    await business.deleteSession(sessionId);
+  }
+
+  res.clearCookie("sessionId");
+  res.redirect("/login?message=Logged out successfully");
+});
+
+
+/**
+ * Protects routes.
+ * If the user is not logged in, redirects them to login.
+ *
+ * @param {import("express").Request} req - Express request object
+ * @param {import("express").Response} res - Express response object
+ * @param {import("express").NextFunction} next - Express next middleware function
+ * @returns {void}
+ */
+app.use((req, res, next) => {
+    if (req.path === "/login" || req.path === "/logout") {
+        return next();
+    }
+
+    if (!req.username) {
+        return res.redirect("/login");
+    }
+
+    next();
+});
+
 
 // home page ----------------------------------------------------------------------------------
 
@@ -29,7 +160,6 @@ app.get("/", async (req, res) => {
 
   res.render("home", {title:"Employees",employees});
 });
-
 
 
 // employee details (GET) ----------------------------------------------

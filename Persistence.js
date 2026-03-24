@@ -1,4 +1,4 @@
-// connection to mongoDb ------------------------------------------------------------------------------
+// connection to mongoDb ---------------------------------------------------------------------------------------
 
 
 const { setServers } = require('node:dns/promises');
@@ -14,7 +14,7 @@ async function getDb(){
     return client.db("infs3201_winter2026");
 }
 
-// Read and update functions --------------------------------------------------------------------------
+// Read functions ------------------------------------------------------------------------------------
 
 
 /**
@@ -114,14 +114,89 @@ async function viewEmployeeSchedule(employeeId) {
  * @param {String} phone - The updated phone number.
  * @returns {Promise<void>} Resolves when update is completed.
  */
-async function updateEmployee(employeeId, name, phone) {
+async function updateEmployee(employeeId, name, phone, photo) {
   const db = await getDb();
   await db.collection("employees").updateOne(
     { _id: new mongodb.ObjectId(employeeId) },
-    { $set: { name: name, phone: phone } }
+    { $set: { name: name, phone: phone, photo: photo } }
   );
 }
  
+// login and session functions --------------------------------------------------------------------------
+
+/**
+ * Looks for a user in the database using username and password.
+ * @param {string} username The user's username.
+ * @param {string} hashedPassword  The user's hashed password.
+ * @returns {Promise<Object|null>} Returns the user if found, otherwise null.
+ */
+async function getUser(username, hashedPassword) {
+    const db = await getDb();
+    return await db.collection("users").findOne({username: username,password: hashedPassword});
+}
+
+/**
+ * Creates a new session and stores it in the database.
+ * @param {Object} sd The session data object.
+ * @returns {Promise<void>} Resolves when the session is stored.
+ */
+async function startSession(sd) {
+    const db = await getDb();
+    await db.collection("sessions").insertOne(sd);
+}
+
+/**
+ * Gets a session from the database using its ID.
+ * @param {string} sessionId The unique session ID.
+ * @returns {Promise<Object|null>} The session object if found, otherwise null.
+ */
+async function getSession(sessionId) {
+    const db = await getDb();
+    return await db.collection("sessions").findOne({ sessionId: sessionId });
+}
+
+/**
+ * Updates the expiration time of a session.
+ * @param {string} sessionId The unique session ID.
+ * @param {Date} expiresAt The new expiration date/time.
+ * @returns {Promise<void>} Resolves when the session is updated.
+ */
+async function updateSession(sessionId, expiresAt) {
+    const db = await getDb();
+    await db.collection("sessions").updateOne(
+        { sessionId: sessionId },
+        { $set: { expiresAt: expiresAt } }
+    );
+}
+
+/**
+ * Deletes a session from the database.
+ * @param {string} sessionId  The unique session ID.
+ * @returns {Promise<void>} Resolves when the session is deleted.
+ */
+async function deleteSession(sessionId) {
+    const db = await getDb();
+    await db.collection("sessions").deleteOne({ sessionId: sessionId });
+}
+
+
+/**
+ * Saves a log of user activity (like page visits and actions).
+ * @param {string} username The username associated with the action.
+ * @param {string} url  The requested URL.
+ * @param {string} method The HTTP method used (GET, POST).
+ * @returns {Promise<void>} Resolves when the log entry is stored.
+ */
+async function addSecurityLog(username, url, method) {
+    const db = await getDb();
+    await db.collection("security_log").insertOne({
+        timestamp: new Date(),
+        username: username,
+        url: url,
+        method: method
+    });
+}
+
 
 
 module.exports={
@@ -131,5 +206,11 @@ module.exports={
     listEmployees,
     addEmployee,
     viewEmployeeSchedule,
-    updateEmployee
+    updateEmployee,
+    getUser,
+    startSession,
+    getSession,
+    updateSession,
+    deleteSession,
+    addSecurityLog
 }

@@ -6,7 +6,7 @@ const MongoClient = mongodb.MongoClient;
 
 const url ="mongodb+srv://60305864:55482521m@cluster0.bw3r7xd.mongodb.net/infs3201_winter2026?appName=Cluster0";
 
-const dbName = "infs3201_winter2026"; // replace with your real database name
+const dbName = "infs3201_winter2026"; 
 
 async function getDb() {
     const client = await MongoClient.connect(url);
@@ -27,22 +27,22 @@ async function createEmptyEmployeesArray() {
 async function embedEmployeesInShifts() {
     const db = await getDb();
 
-    // Step 1: get all assignments
+    
     const assignments = await db.collection("assignments").find().toArray();
 
     for (let i = 0; i < assignments.length; i++) {
 
         let assignment = assignments[i];
 
-        // Step 2: find employee using employeeId
+        
         let employee = await db.collection("employees").findOne({
             employeeId: assignment.employeeId
         });
 
-        // Step 3: if employee exists
+        
         if (employee) {
 
-            // Step 4: push employee._id into shift.employees 
+             
             await db.collection("shifts").updateOne(
                 { shiftId: assignment.shiftId },
                 { $push: { employees: employee._id } }
@@ -86,4 +86,15 @@ async function dropAssignmentsCollection() {
     console.log("assignments collection deleted");
 }
 
+
+async function addPhotoFieldToEmployees() {
+    const db = await getDb();
+
+    await db.collection("employees").updateMany(
+        {},
+        { $set: { photo: "default.jpg" } }
+    );
+
+    console.log("Photo field added to all employees.");
+}
 
