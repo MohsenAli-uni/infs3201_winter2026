@@ -208,6 +208,15 @@ async function addSecurityLog(username, url, method) {
     });
 }
 
+async function createSessionTTLIndex() {
+    const db = await getDb();
+
+    await db.collection("sessions").createIndex(
+        { expiresAt: 1 },
+        { expireAfterSeconds: 0 }
+    );
+}
+
 
 
 module.exports={
@@ -223,5 +232,6 @@ module.exports={
     getSession,
     updateSession,
     deleteSession,
-    addSecurityLog
+    addSecurityLog,
+    createSessionTTLIndex
 }
