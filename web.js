@@ -283,6 +283,4 @@ app.post("/employee/:id/edit", async (req, res) => {
   res.redirect(`/employee/${id}`);
 });
 
-app.listen(8000, () =>
-  console.log("server is up http://127.0.0.1:8000/")
-);
+app.listen(8000, () => console.log("server is up http://127.0.0.1:8000/"));
