@@ -1,0 +1,23 @@
+<h1>Documents for {{employee.name}}</h1>
+
+{{#if message}}
+<p>{{message}}</p>
+{{/if}}
+
+<form method="POST" action="/employee/{{employee._id}}/documents" enctype="multipart/form-data">
+    <label for="document">Upload PDF document:</label>
+    <input type="file" id="document" name="document" accept="application/pdf">
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Uploaded Documents</h2>
+
+<ul>
+    {{#each documents}}
+        <li>
+            <a href="/documents/{{this._id}}">{{this.originalName}}</a>
+        </li>
+    {{/each}}
+</ul>
+
+<p><a href="/employee/{{employee._id}}">Back to Employee Details</a></p>

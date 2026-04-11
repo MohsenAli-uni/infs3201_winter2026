@@ -7,7 +7,27 @@ const app = new express();
 const { engine } = require("express-handlebars");
 const crypto = require("crypto");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
+const uploadStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "employee_documents");
+  },
+  filename: function (req, file, cb) {
+    let uniqueName =
+      Date.now() + "-" + crypto.randomUUID() + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({
+  storage: uploadStorage,
+  limits: {
+    fileSize: 2 * 1024 * 1024
+  }
+});
 
 app.engine("handlebars", engine({ layoutsDir: "./templates/layouts"}));
 app.use(express.static("photos"));
@@ -148,6 +168,8 @@ app.post("/twoFactor", async (req, res) => {
 
   res.redirect("/");
 });
+
+
 
 
 /**
@@ -332,5 +354,122 @@ app.post("/employee/:id/edit", async (req, res) => {
 
   res.redirect(`/employee/${id}`);
 });
+
+
+
+/**
+ * Shows employee documents page.
+ * @route GET /employee/:id/documents
+ */
+app.get("/employee/:id/documents", async (req, res) => {
+  let id = req.params.id;
+  let message = req.query.message || "";
+
+  let employees = await business.listEmployees();
+  let employee = null;
+
+  for (let i = 0; i < employees.length; i++) {
+    if (String(employees[i]._id) === String(id)) {
+      employee = employees[i];
+      break;
+    }
+  }
+
+  if (!employee)
+    return res.render("notFound", {
+      title: "Not Found",
+      message: "Employee not found"
+    });
+
+  let documents = await business.listEmployeeDocuments(id);
+
+  res.render("employeeDocuments", {
+    title: "Employee Documents",
+    employee: employee,
+    documents: documents,
+    message: message
+  });
+});
+
+/**
+ * Handles employee document upload.
+ * @route POST /employee/:id/documents
+ */
+app.post("/employee/:id/documents", upload.single("document"), async (req, res) => {
+  let id = req.params.id;
+
+  let employees = await business.listEmployees();
+  let employee = null;
+
+  for (let i = 0; i < employees.length; i++) {
+    if (String(employees[i]._id) === String(id)) {
+      employee = employees[i];
+      break;
+    }
+  }
+
+  if (!employee)
+    return res.render("notFound", {
+      title: "Not Found",
+      message: "Employee not found"
+    });
+
+  let message = await business.saveEmployeeDocument(id, req.file);
+
+  if (message) {
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, () => {});
+    }
+
+    let documents = await business.listEmployeeDocuments(id);
+
+    return res.render("employeeDocuments", {
+      title: "Employee Documents",
+      employee: employee,
+      documents: documents,
+      message: message
+    });
+  }
+
+  res.redirect(`/employee/${id}/documents`);
+});
+
+
+/**
+ * Downloads/view an employee document securely.
+ * @route GET /documents/:documentId
+ */
+app.get("/documents/:documentId", async (req, res) => {
+  let documentId = req.params.documentId;
+
+  let document = await business.getEmployeeDocument(documentId);
+
+  if (!document)
+    return res.render("notFound", {
+      title: "Not Found",
+      message: "Document not found"
+    });
+
+  let fullPath = path.join(__dirname, "employee_documents", document.storedName);
+
+  if (!fs.existsSync(fullPath))
+    return res.render("notFound", {
+      title: "Not Found",
+      message: "File not found"
+    });
+
+  res.sendFile(fullPath);
+});
+
+
+app.use("/employee/:id/documents", async (err, req, res, next) => {
+  if (err && err.code === "LIMIT_FILE_SIZE") {
+    let id = req.params.id;
+    return res.redirect(`/employee/${id}/documents?message=File size must not be more than 2MB`);
+  }
+
+  next(err);
+});
+
 
 app.listen(8000, () => console.log("server is up http://127.0.0.1:8000/"));

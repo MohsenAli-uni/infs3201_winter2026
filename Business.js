@@ -2,6 +2,7 @@
 const persistence = require("./persistence")
 const crypto = require("crypto");
 const emailSystem = require("./emailSystem");
+const path = require("path");
 
 /**
  * List all the registered employees(ID,Name,Phone).
@@ -218,6 +219,58 @@ async function completeLoginWith2FA(username, code) {
     return sd;
 }
 
+/**
+ * Gets all uploaded documents for one employee.
+ * @param {string} employeeId
+ * @returns {Promise<Array>}
+ */
+async function listEmployeeDocuments(employeeId) {
+    return await persistence.getEmployeeDocuments(employeeId);
+}
+
+
+/**
+ * Validates and saves uploaded employee document metadata.
+ * @param {string} employeeId
+ * @param {Object} file
+ * @returns {Promise<string|undefined>} Returns error message or undefined if valid.
+ */
+async function saveEmployeeDocument(employeeId, file) {
+    if (!file)
+        return "Please select a PDF file";
+
+    if (file.mimetype !== "application/pdf")
+        return "Only PDF documents are allowed";
+
+    if (file.size > 2 * 1024 * 1024)
+        return "File size must not be more than 2MB";
+
+    let documents = await persistence.getEmployeeDocuments(employeeId);
+
+    if (documents.length >= 5)
+        return "No more than 5 documents are permitted for this employee";
+
+    await persistence.addEmployeeDocument({
+        employeeId: employeeId,
+        originalName: file.originalname,
+        storedName: file.filename,
+        mimetype: file.mimetype,
+        size: file.size,
+        uploadedAt: new Date()
+    });
+
+    return undefined;
+}
+
+/**
+ * Gets one employee document by id.
+ * @param {string} documentId
+ * @returns {Promise<Object|null>}
+ */
+async function getEmployeeDocument(documentId) {
+    return await persistence.getEmployeeDocumentById(documentId);
+}
+
 
 
 module.exports = { 
@@ -230,5 +283,8 @@ module.exports = {
     deleteSession,
     logAccess,
     beginLogin,
-    completeLoginWith2FA
+    completeLoginWith2FA,
+    listEmployeeDocuments,
+    saveEmployeeDocument,
+    getEmployeeDocument
  };

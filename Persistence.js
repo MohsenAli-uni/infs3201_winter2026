@@ -313,6 +313,46 @@ async function createTwoFactorTTLIndex() {
         { expireAfterSeconds: 0 }
     );
 }
+
+
+/**
+ * Gets all uploaded documents for one employee.
+ * @param {string} employeeId
+ * @returns {Promise<Array>}
+ */
+async function getEmployeeDocuments(employeeId) {
+    const db = await getDb();
+
+    return await db.collection("employee_documents").find({
+        employeeId: employeeId
+    }).toArray();
+}
+
+/**
+ * Saves document metadata in the database.
+ * @param {Object} documentData
+ * @returns {Promise<void>}
+ */
+async function addEmployeeDocument(documentData) {
+    const db = await getDb();
+    await db.collection("employee_documents").insertOne(documentData);
+}
+
+
+/**
+ * Gets one document by id.
+ * @param {string} documentId
+ * @returns {Promise<Object|null>}
+ */
+async function getEmployeeDocumentById(documentId) {
+    const db = await getDb();
+
+    return await db.collection("employee_documents").findOne({
+        _id: new mongodb.ObjectId(documentId)
+    });
+}
+
+
 module.exports={
     
     readEmployeesData,
@@ -335,5 +375,8 @@ module.exports={
     incrementFailedLoginAttempts,
     resetFailedLoginAttempts,
     lockAccount,
-    createTwoFactorTTLIndex
+    createTwoFactorTTLIndex,
+    getEmployeeDocuments,
+    addEmployeeDocument,
+    getEmployeeDocumentById
 }
