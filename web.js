@@ -1,6 +1,7 @@
 // Connection and Setup -----------------------------------------------------------------------------------------------
 
 const business = require("./business");
+const persistence = require("./persistence");
 const express = require("express");
 const app = new express();
 const { engine } = require("express-handlebars");
@@ -15,6 +16,9 @@ app.set("views", "./templates");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
+persistence.createSessionTTLIndex();
+persistence.createTwoFactorTTLIndex();
 
 // login and session functions ------------------------------------------------------------------------------------------
 
@@ -84,10 +88,56 @@ app.post("/login", async (req, res) => {
         });
     }
 
-  let session = await business.verifyLogin(username, password);
+  let attempt = await business.beginLogin(username, password);
+
+  if (!attempt) {
+    return res.redirect("/login?message=Invalid username or password");
+  }
+
+ res.render("twoFactor", {
+    title: "Two-Factor Authentication",
+    username: username,
+    message: "A verification code has been sent to your email."
+  });
+});
+
+/**
+ * Shows the 2FA page.
+ */
+app.get("/twoFactor", (req, res) => {
+  let username = req.query.username || "";
+  let message = req.query.message || "";
+
+  res.render("twoFactor", {
+    title: "Two-Factor Authentication",
+    username: username,
+    message: message
+  });
+});
+
+/**
+ * Handles submitted 2FA code.
+ */
+app.post("/twoFactor", async (req, res) => {
+  let username = (req.body.username || "").trim();
+  let code = (req.body.code || "").trim();
+
+  if (!username || !code) {
+    return res.render("twoFactor", {
+      title: "Two-Factor Authentication",
+      username: username,
+      message: "Please enter the code"
+    });
+  }
+
+  let session = await business.completeLoginWith2FA(username, code);
 
   if (!session) {
-    return res.redirect("/login?message=Invalid username or password");
+    return res.render("twoFactor", {
+      title: "Two-Factor Authentication",
+      username: username,
+      message: "Invalid or expired code"
+    });
   }
 
   res.cookie("sessionId", session.sessionId, {
@@ -97,7 +147,6 @@ app.post("/login", async (req, res) => {
 
   res.redirect("/");
 });
-
 
 
 /**
@@ -130,7 +179,7 @@ app.get("/logout", async (req, res) => {
  * @returns {void}
  */
 app.use((req, res, next) => {
-    if (req.path === "/login" || req.path === "/logout") {
+    if (req.path === "/login" || req.path === "/logout" || req.path === "/twoFactor") {
         return next();
     }
 

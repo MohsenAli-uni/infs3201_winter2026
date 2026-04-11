@@ -1,0 +1,12 @@
+<h1>Two-Factor Authentication</h1>
+
+<p>{{message}}</p>
+
+<form method="POST" action="/twoFactor">
+    <input type="hidden" name="username" value="{{username}}">
+
+    <label for="code">Enter 6-digit code:</label>
+    <input type="text" id="code" name="code">
+
+    <button type="submit">Verify</button>
+</form>

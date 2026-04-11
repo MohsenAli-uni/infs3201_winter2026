@@ -1,7 +1,7 @@
 
 const persistence = require("./persistence")
 const crypto = require("crypto");
-
+const emailSystem = require("./emailSystem");
 
 /**
  * List all the registered employees(ID,Name,Phone).
@@ -122,6 +122,93 @@ async function logAccess(username, url, method) {
 }
 
 
+
+
+
+async function beginLogin(username, password) {
+    let user = await persistence.getUserByUsername(username);
+
+    if (!user)
+        return undefined;
+
+    if (user.locked === true)
+        return undefined;
+
+    let hashedPassword = crypto
+        .createHash("sha256")
+        .update(password)
+        .digest("hex");
+
+    if (user.password !== hashedPassword) {
+        await persistence.incrementFailedLoginAttempts(username);
+
+        let updatedUser = await persistence.getUserByUsername(username);
+
+        if (updatedUser.failedLoginAttempts >= 3 && updatedUser.failedLoginAttempts < 10) {
+            if (updatedUser.email) {
+                await emailSystem.sendSuspiciousActivityEmail(updatedUser.email);
+            }
+        }
+
+        if (updatedUser.failedLoginAttempts >= 10) {
+            await persistence.lockAccount(username);
+
+            if (updatedUser.email) {
+                await emailSystem.sendAccountLockedEmail(updatedUser.email);
+            }
+        }
+
+        return undefined;
+    }
+
+    await persistence.resetFailedLoginAttempts(username);
+    await persistence.deleteTwoFactorTokens(username);
+
+    
+    let code = String(Math.floor(100000 + Math.random() * 900000));
+
+    await persistence.saveTwoFactorToken({
+        username: username,
+        code: code,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 3)
+    });
+
+    
+
+    if (user.email) {
+        await emailSystem.sendTwoFactorCodeEmail(user.email, code);
+    }
+
+    return { username: username };
+}
+
+
+
+
+async function completeLoginWith2FA(username, code) {
+    let token = await persistence.getTwoFactorToken(username, code);
+
+    if (!token) return null;
+
+    if (new Date(token.expiresAt) < new Date()) {
+        await persistence.deleteTwoFactorTokens(username);
+        return null;
+    }
+
+    await persistence.deleteTwoFactorTokens(username);
+
+    let sd = {
+        sessionId: crypto.randomUUID(),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 5),
+        username: username
+    };
+
+    await persistence.startSession(sd);
+    return sd;
+}
+
+
+
 module.exports = { 
     listEmployees, 
     addEmployee, 
@@ -130,5 +217,8 @@ module.exports = {
     verifyLogin
     ,validateSession,
     deleteSession,
-    logAccess
+    logAccess,
+
+    beginLogin,
+    completeLoginWith2FA
  };

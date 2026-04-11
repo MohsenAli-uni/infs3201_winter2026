@@ -217,8 +217,65 @@ async function createSessionTTLIndex() {
     );
 }
 
+//-------------------------------------------------------------------------------------------
+async function getUserByUsername(username) {
+    const db = await getDb();
+    return await db.collection("users").findOne({ username: username });
+}
+
+async function saveTwoFactorToken(tokenData) {
+    const db = await getDb();
+    await db.collection("two_factor_tokens").insertOne(tokenData);
+}
+
+async function getTwoFactorToken(username, code) {
+    const db = await getDb();
+    return await db.collection("two_factor_tokens").findOne({
+        username: username,
+        code: code
+    });
+}
+
+async function deleteTwoFactorTokens(username) {
+    const db = await getDb();
+    await db.collection("two_factor_tokens").deleteMany({ username: username });
+}
 
 
+async function incrementFailedLoginAttempts(username) {
+    const db = await getDb();
+    await db.collection("users").updateOne(
+        { username: username },
+        { $inc: { failedLoginAttempts: 1 } }
+    );
+}
+
+async function resetFailedLoginAttempts(username) {
+    const db = await getDb();
+    await db.collection("users").updateOne(
+        { username: username },
+        { $set: { failedLoginAttempts: 0 } }
+    );
+}
+
+
+async function lockAccount(username) {
+    const db = await getDb();
+    await db.collection("users").updateOne(
+        { username: username },
+        { $set: { locked: true } }
+    );
+}
+
+
+async function createTwoFactorTTLIndex() {
+    const db = await getDb();
+
+    await db.collection("two_factor_tokens").createIndex(
+        { expiresAt: 1 },
+        { expireAfterSeconds: 0 }
+    );
+}
 module.exports={
     
     readEmployeesData,
@@ -233,5 +290,13 @@ module.exports={
     updateSession,
     deleteSession,
     addSecurityLog,
-    createSessionTTLIndex
+    createSessionTTLIndex,
+    getUserByUsername,
+    saveTwoFactorToken,
+    getTwoFactorToken,
+    deleteTwoFactorTokens,
+    incrementFailedLoginAttempts,
+    resetFailedLoginAttempts,
+    lockAccount,
+    createTwoFactorTTLIndex
 }
