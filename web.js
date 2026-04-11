@@ -115,6 +115,7 @@ app.get("/twoFactor", (req, res) => {
   });
 });
 
+
 /**
  * Handles submitted 2FA code.
  */

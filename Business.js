@@ -124,7 +124,13 @@ async function logAccess(username, url, method) {
 
 
 
-
+/**
+ * Checks username/password and starts the 2FA.
+ * Does not create the real session yet.
+ * @param {string} username
+ * @param {string} password
+ * @returns {Promise<{ ok: boolean, message: string }>}
+ */
 async function beginLogin(username, password) {
     let user = await persistence.getUserByUsername(username);
 
@@ -184,7 +190,12 @@ async function beginLogin(username, password) {
 
 
 
-
+/**
+ * Verifies the submitted 2FA code and creates the real session.
+ * @param {string} username
+ * @param {string} code
+ * @returns {Promise<{ sessionId: string, expiresAt: Date, username: string } | null>}
+ */
 async function completeLoginWith2FA(username, code) {
     let token = await persistence.getTwoFactorToken(username, code);
 
@@ -218,7 +229,6 @@ module.exports = {
     ,validateSession,
     deleteSession,
     logAccess,
-
     beginLogin,
     completeLoginWith2FA
  };

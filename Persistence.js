@@ -218,16 +218,33 @@ async function createSessionTTLIndex() {
 }
 
 //-------------------------------------------------------------------------------------------
+
+/**
+ * Finds a user by username only.
+ * @param {string} username
+ * @returns {Promise<Object|null>}
+ */
 async function getUserByUsername(username) {
     const db = await getDb();
     return await db.collection("users").findOne({ username: username });
 }
 
+/**
+ * Stores a 2FA token in the database.
+ * @param {Object} tokenData
+ * @returns {Promise<void>}
+ */
 async function saveTwoFactorToken(tokenData) {
     const db = await getDb();
     await db.collection("two_factor_tokens").insertOne(tokenData);
 }
 
+/**
+ * Gets a valid 2FA token by username and code.
+ * @param {string} username
+ * @param {string} code
+ * @returns {Promise<Object|null>}
+ */
 async function getTwoFactorToken(username, code) {
     const db = await getDb();
     return await db.collection("two_factor_tokens").findOne({
@@ -236,12 +253,22 @@ async function getTwoFactorToken(username, code) {
     });
 }
 
+/**
+ * Deletes all 2FA tokens for a user.
+ * @param {string} username
+ * @returns {Promise<void>}
+ */
 async function deleteTwoFactorTokens(username) {
     const db = await getDb();
     await db.collection("two_factor_tokens").deleteMany({ username: username });
 }
 
 
+/**
+ * Increases failed login attempts for a user.
+ * @param {string} username
+ * @returns {Promise<void>}
+ */
 async function incrementFailedLoginAttempts(username) {
     const db = await getDb();
     await db.collection("users").updateOne(
@@ -250,6 +277,12 @@ async function incrementFailedLoginAttempts(username) {
     );
 }
 
+
+/**
+ * Resets failed login attempts to 0.
+ * @param {string} username
+ * @returns {Promise<void>}
+ */
 async function resetFailedLoginAttempts(username) {
     const db = await getDb();
     await db.collection("users").updateOne(
@@ -258,7 +291,11 @@ async function resetFailedLoginAttempts(username) {
     );
 }
 
-
+/**
+ * Locks the user's account.
+ * @param {string} username
+ * @returns {Promise<void>}
+ */
 async function lockAccount(username) {
     const db = await getDb();
     await db.collection("users").updateOne(
