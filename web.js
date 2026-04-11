@@ -462,6 +462,10 @@ app.get("/documents/:documentId", async (req, res) => {
 });
 
 
+/**
+ * Handles file upload errors.
+ * Redirects if file exceeds size limit, otherwise passes error to next middleware.
+ */
 app.use("/employee/:id/documents", async (err, req, res, next) => {
   if (err && err.code === "LIMIT_FILE_SIZE") {
     let id = req.params.id;
