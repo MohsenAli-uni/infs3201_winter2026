@@ -21,3 +21,25 @@
 </ul>
 
 <p><a href="/employee/{{employee._id}}">Back to Employee Details</a></p>
+
+
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+  let fileInput = document.getElementById("document");
+  let file = fileInput.files[0];
+
+  if (!file) return;
+
+  if (file.type !== "application/pdf") {
+    alert("Only PDF files are allowed");
+    e.preventDefault();
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert("File must be less than 2MB");
+    e.preventDefault();
+    return;
+  }
+});
+</script>
