@@ -3,7 +3,7 @@
 {{#if message}}
 <p>{{message}}</p>
 {{/if}}
-
+<p id="msg" style="color:rgb(19, 2, 2);"></p>
 <form method="POST" action="/employee/{{employee._id}}/documents" enctype="multipart/form-data">
     <label for="document">Upload PDF document:</label>
     <input type="file" id="document" name="document" accept="application/pdf">
@@ -24,22 +24,14 @@
 
 
 <script>
-document.querySelector("form").addEventListener("submit", function (e) {
-  let fileInput = document.getElementById("document");
-  let file = fileInput.files[0];
+<script>
+document.querySelector("form").onsubmit = function (e) {
+  let file = document.getElementById("document").files[0];
 
-  if (!file) return;
-
-  if (file.type !== "application/pdf") {
-    alert("Only PDF files are allowed");
+  if (file && file.size > 2 * 1024 * 1024) {
+    document.getElementById("msg").textContent = "File must be less than 2MB";
     e.preventDefault();
-    return;
   }
-
-  if (file.size > 2 * 1024 * 1024) {
-    alert("File must be less than 2MB");
-    e.preventDefault();
-    return;
-  }
-});
+};
+</script>
 </script>
